@@ -229,15 +229,18 @@ def classifyPose(landmarks, output_image, display=False):
                 
     #----------------------------------------------------------------------------------------------------------------
     if(label == 'Tree Pose'):
-       variables.total_cal_burned += random.uniform(0.3, 0.6)
+       variables.total_cal_burned += random.uniform(0.03, 0.06)
     if(label == 'T Pose'):
-        variables.total_cal_burned += random.uniform(0.1, 0.3)
+        variables.total_cal_burned += random.uniform(0.01, 0.03)
     if(label == 'Warrior II Pose'):
-        variables.total_cal_burned += random.uniform(0.4, 0.8)
+        variables.total_cal_burned += random.uniform(0.04, 0.08)
 
     cv2.putText(output_image, 'Total calories burned - ' + str(variables.total_cal_burned), (650, 30),cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 0), 2)
     # Check if the pose is classified successfully
     if label != 'Unknown Pose':
+        if variables.timer % 5 == 0:
+            variables.poses.append(label)
+        print(variables.poses)
         color = (0, 255, 0)  
         accuracy_val = random.randint(85, 95)
         cv2.putText(output_image, 'Accuracy - ' + str(accuracy_val), (10, 70),cv2.FONT_HERSHEY_PLAIN, 2, color, 2)
@@ -246,6 +249,8 @@ def classifyPose(landmarks, output_image, display=False):
     
     # Write the label on the output image. 
     cv2.putText(output_image, label, (10, 30),cv2.FONT_HERSHEY_PLAIN, 2, color, 2)
+    cv2.putText(output_image, 'Total correct poses done - ' + str(len(variables.poses)), (550, 70),cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 0), 2)
+
     
     # Check if the resultant image is specified to be displayed.
     if display:
@@ -273,6 +278,8 @@ cv2.namedWindow('Pose Classification', cv2.WINDOW_NORMAL)
 
 # Iterate until the webcam is accessed successfully.
 while camera_video.isOpened():
+    variables.timer += 1
+    time.sleep(0.5)
     
     # Read a frame.
     ok, frame = camera_video.read()
