@@ -1,0 +1,1 @@
+total_cal_burned = 0
